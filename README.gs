@@ -3,7 +3,7 @@
 // README
 // ======
 //
-// Dev: codlord.com
+// Dev: AndrewRoberts.net & codlord.com
 
 // v1.0
 // ----
