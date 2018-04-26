@@ -1,0 +1,12 @@
+{
+  "timeZone": "Europe/London",
+  "dependencies": {
+    "libraries": [{
+      "userSymbol": "Timesheet",
+      "libraryId": "1OBgft9TNDAkuZx9H-fueqcTjnit4vejmn9feMidalFOtQjuW0lINXAzJ",
+      "version": "1",
+      "developmentMode": true
+    }]
+  },
+  "exceptionLogging": "STACKDRIVER"
+}
