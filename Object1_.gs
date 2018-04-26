@@ -12,6 +12,14 @@
 
 var Object1_ = (function(ns) {
 
+  /**
+   *
+   *
+   * @param {Object} 
+   *
+   * @return {Object}
+   */
+
   ns.function1 = function() {
   
     

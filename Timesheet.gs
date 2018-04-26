@@ -5,7 +5,7 @@
 
 (function() {"use strict"})()
 
-// GasTemplate.gs
+// Timesheet.gs
 // ==============
 //
 // Dev: AndrewRoberts.net
@@ -42,33 +42,15 @@ var EVENT_HANDLERS = {
 //                         Initial actions  Name                         onError Message                        Main Functionality
 //                         ---------------  ----                         ---------------                        ------------------
 
-  onInstall:               [function() {},  'onInstall()',              'Failed to install',                    onInstall_],
   checkIn:                 [function() {},  'checkIn()',                'checkIn failed',                       checkIn_],
   checkOut:                [function() {},  'checkOut()',               'checkOut failed',                      checkOut_],
 }
 
 // function (arg)                     {return eventHandler_(EVENT_HANDLERS., arg)}
 
-function onInstall (arg1, arg2, properties, lock) {return eventHandler_(EVENT_HANDLERS.onInstall, arg1, arg2, properties, lock)}
 function checkIn (arg1, arg2, properties, lock) {return eventHandler_(EVENT_HANDLERS.checkIn, arg1, arg2, properties, lock)}
 function checkOut (arg1, arg2, properties, lock) {return eventHandler_(EVENT_HANDLERS.checkOut, arg1, arg2, properties, lock)}
 
-/**
- * Event handler for the sheet being opened. This is a special case
- * as all it can do is create a menu whereas the usual eventHandler_()
- * does things we don't have permission for at this stage.
- */
-
-function onOpen() {
-
-  var ui = SpreadsheetApp.getUi()
-  var menu = ui.createMenu('Custom menu')
-
-  menu
-    .addItem('Custom menu item 1', 'onCustomFunction1')
-    .addToUi()
-    
-} // onOpen()
 
 // Private Functions
 // =================
@@ -86,10 +68,10 @@ function onOpen() {
  *   [2] {String} onErrorMessage
  *   [3] {Function} mainFunction
  
- * @parma {Object}   arg1       The argument passed to the top-level event handler
- * @parma {Object}   arg2       The argument passed to the top-level event handler
- * @parma {Property} properties A PropertiesService
- * @parma {Lock}     lock       A LockService
+ * @param {Object}   arg1       The argument passed to the top-level event handler
+ * @param {Object}   arg2       The argument passed to the top-level event handler
+ * @param {Property} properties A PropertiesService
+ * @param {Lock}     lock       A LockService
  */
 
 function eventHandler_(config, arg1, arg2, properties, lock) {
@@ -137,15 +119,15 @@ function eventHandler_(config, arg1, arg2, properties, lock) {
   }
 
   // Perform the main functionality
-
+  var originallyHasLock
   try {
 
-    var originallyHasLock = lock.hasLock()
+    originallyHasLock = lock.hasLock()
 
     // Perform any initial functions
     config[0]()    
     
-    var originallyHasLock = lock.hasLock() 
+    originallyHasLock = lock.hasLock() 
     
     initialseEventHandler()
     
@@ -215,16 +197,6 @@ function eventHandler_(config, arg1, arg2, properties, lock) {
 // Private event handlers
 // ----------------------
 
-/**
- * Private 'on install' event handler
- */
-
-function onInstall_() {
-
-  // TODO - Anything that needs doing on installation
-
-} // onInstall_()
-
 
 /**
  * Private 'check in' event handler
@@ -234,26 +206,21 @@ function checkIn_(documentProperties) {
   
   // See what the check in/out status currently is
   var status = documentProperties.getProperty(TIMESHEET_PROPERTY_STATUS)
-  if (status == STATUS_CHECKED_IN)
-  {
+  if (status === STATUS_CHECKED_IN) {
     // Not checked out
     uiErrorDialog('You have not checked out, so you cannot check in.')
-  }
-  else
-  {
+  } else {
     // Get the last row
     var lastRow = documentProperties.getProperty(TIMESHEET_PROPERTY_LAST_ROW)
-    if (lastRow == null)
-    {
+    if (lastRow === null) {
       // No property set so (for now at least) we assume the last row is 2
       // TODO - check with Andrew how to identify last row, will template start blank or with a first row?
       //        using a property to store last row of course means you can't manually insert rows and have script
       //        continue to work so we may want to do something else?
       lastRow = 2
     }
-    else
-    {
-      lastRow = parseInt(lastRow)
+    else {
+      lastRow = parseInt(lastRow, 10)
     }
    
     // Insert a new row under the last row (this new row will inherit formatting from the above row)
@@ -272,10 +239,8 @@ function checkIn_(documentProperties) {
     // Not sure if this is a bug or a value is considered a formula too?
     // Anyway, we now need to clear the non-formula values
     var formulas = range.getFormulas();
-    for (var count = 0; count < formulas[0].length; count++)
-    {
-      if(formulas[0][count] == '')
-      {
+    for (var count = 0; count < formulas[0].length; count++) {
+      if(formulas[0][count] === '') {
         range = sheet.getRange(lastRow, count+1)
         range.setValue('')
       }    
@@ -288,7 +253,8 @@ function checkIn_(documentProperties) {
         [ 
           [ 
             currentDate, // Date
-            currentDate // Start
+            currentDate, // Start
+            currentDate  // End
           ]
         ];    
     range = sheet.getRange(lastRow, TIMESHEET_COLUMN_DATE, 1, newValues[0].length)
@@ -313,13 +279,10 @@ function checkOut_(documentProperties) {
 
   // See what the check in/out status currently is
   var status = documentProperties.getProperty(TIMESHEET_PROPERTY_STATUS)
-  if (status == null || status == STATUS_CHECKED_OUT)
-  {
+  if (status === null || status === STATUS_CHECKED_OUT) {
     // Not checked in
     uiErrorDialog('You have not checked in, so you cannot check out.')
-  }
-  else
-  {
+  } else {
     // Get the last row
     var lastRow = documentProperties.getProperty(TIMESHEET_PROPERTY_LAST_ROW)
     

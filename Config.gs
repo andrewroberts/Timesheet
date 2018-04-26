@@ -54,22 +54,22 @@ var STATUS_CHECKED_OUT = 'CHECKED_OUT'
 
 // Columns in the Timesheet
 var columnNumber = 1;
-TIMESHEET_COLUMN_DATE = columnNumber; columnNumber++
-TIMESHEET_COLUMN_START = columnNumber; columnNumber++
-TIMESHEET_COLUMN_END = columnNumber; columnNumber++
-TIMESHEET_COLUMN_TIME = columnNumber; columnNumber++
-TIMESHEET_COLUMN_BILLABLE = columnNumber; columnNumber++
-TIMESHEET_COLUMN_TOTAL = columnNumber; columnNumber++
-TIMESHEET_COLUMN_HOURS = columnNumber; columnNumber++
-TIMESHEET_COLUMN_BURNUP = columnNumber; columnNumber++
-TIMESHEET_COLUMN_ACTUAL_BURNDOWN = columnNumber; columnNumber++
-TIMESHEET_COLUMN_PREDICTED_BURNDOWN = columnNumber; columnNumber++
-TIMESHEET_COLUMN_BLANK = columnNumber; columnNumber++
-TIMESHEET_COLUMN_EOD = columnNumber; columnNumber++
-TIMESHEET_COLUMN_VELOCITY = columnNumber; columnNumber++
-TIMESHEET_COLUMN_INVOICE = columnNumber; columnNumber++
-TIMESHEET_COLUMN_TASK_NOTES = columnNumber; columnNumber++
-TIMESHEET_COLUMN_COUNT = columnNumber--
+var TIMESHEET_COLUMN_DATE = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_START = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_END = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_TIME = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_BILLABLE = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_TOTAL = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_HOURS = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_BURNUP = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_ACTUAL_BURNDOWN = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_PREDICTED_BURNDOWN = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_BLANK = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_EOD = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_VELOCITY = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_INVOICE = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_TASK_NOTES = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_COUNT = columnNumber--
 
 
 // Function Template

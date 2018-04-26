@@ -27,8 +27,8 @@ function resetProperties(properties) {
 // DESCRIPTION:
 // Displays an error dialog to the user with just an OK button.
 // ********************************************************************************
-function uiErrorDialog(message)
-{
+function uiErrorDialog(message) {
+  
   var ui = SpreadsheetApp.getUi(); 
   
   ui.alert(
@@ -36,7 +36,7 @@ function uiErrorDialog(message)
     message,
     ui.ButtonSet.OK);
     
-} // end uiErrorDialog
+} // uiErrorDialog()
 
 
 // ********************************************************************************
@@ -51,8 +51,8 @@ function uiErrorDialog(message)
 // DESCRIPTION:
 // Displays a message dialog to the user with just an OK button.
 // ********************************************************************************
-function uiMessageDialog(title, message)
-{
+function uiMessageDialog(title, message) {
+  
   var ui = SpreadsheetApp.getUi(); 
   
   ui.alert(
@@ -60,4 +60,4 @@ function uiMessageDialog(title, message)
     message,
     ui.ButtonSet.OK);
     
-} // end uiMessageDialog
+} // uiMessageDialog()
