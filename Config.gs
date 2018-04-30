@@ -69,7 +69,7 @@ var TIMESHEET_COLUMN_EOD = columnNumber; columnNumber++
 var TIMESHEET_COLUMN_VELOCITY = columnNumber; columnNumber++
 var TIMESHEET_COLUMN_INVOICE = columnNumber; columnNumber++
 var TIMESHEET_COLUMN_TASK_NOTES = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_COUNT = columnNumber--
+var TIMESHEET_COLUMN_COUNT = columnNumber - 1;
 
 
 // Function Template
