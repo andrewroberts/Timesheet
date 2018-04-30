@@ -21,8 +21,8 @@
 // Configuration
 // =============
 
-var SCRIPT_NAME = "GAS Framework"
-var SCRIPT_VERSION = "v1.0 (Dev)"
+var SCRIPT_NAME = "Timesheet"
+var SCRIPT_VERSION = "v1.0"
 
 var PRODUCTION_VERSION_ = false
 

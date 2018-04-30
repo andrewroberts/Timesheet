@@ -126,9 +126,7 @@ function eventHandler_(config, arg1, arg2, properties, lock) {
 
     // Perform any initial functions
     config[0]()    
-    
-    originallyHasLock = lock.hasLock() 
-    
+
     initialseEventHandler()
     
     var userEmail = Session.getEffectiveUser().getEmail()
@@ -207,27 +205,39 @@ function checkIn_(documentProperties) {
   // See what the check in/out status currently is
   var status = documentProperties.getProperty(TIMESHEET_PROPERTY_STATUS)
   if (status === STATUS_CHECKED_IN) {
+    
     // Not checked out
     uiErrorDialog('You have not checked out, so you cannot check in.')
+    
   } else {
+    
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME)
+    
     // Get the last row
     var lastRow = documentProperties.getProperty(TIMESHEET_PROPERTY_LAST_ROW)
     if (lastRow === null) {
-      // No property set so (for now at least) we assume the last row is 2
-      // TODO - check with Andrew how to identify last row, will template start blank or with a first row?
-      //        using a property to store last row of course means you can't manually insert rows and have script
-      //        continue to work so we may want to do something else?
-      lastRow = 2
-    }
-    else {
+      
+      // No property set so find the first non-blank row by searching the first date column      
+      var values = sheet.getRange(1, 1, sheet.getLastRow()).getValues()
+           
+      for (var count = 0; count < values.length; count++) {
+        
+        if (values[count][0] == "") {
+          
+          lastRow = count
+          break;
+        }
+                  
+      }
+      
+    } else {
+      
       lastRow = parseInt(lastRow, 10)
+      
     }
    
     // Insert a new row under the last row (this new row will inherit formatting from the above row)
-    // TODO - will the template start with all the formatting or do we want to start with a blank sheet
-    //        and set all the formatting options here?
-    // TODO - check with Andrew how to identify sheet - for now by sheet name
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME).insertRowAfter(lastRow)
+    sheet.insertRowAfter(lastRow)
     lastRow = lastRow + 1
     
     // Copy all the formulas from the previous above to our new row
@@ -240,10 +250,14 @@ function checkIn_(documentProperties) {
     // Anyway, we now need to clear the non-formula values
     var formulas = range.getFormulas();
     for (var count = 0; count < formulas[0].length; count++) {
+      
       if(formulas[0][count] === '') {
+        
         range = sheet.getRange(lastRow, count+1)
         range.setValue('')
-      }    
+        
+      } 
+      
     }
     
     // Create an array for the new row values and insert them
@@ -259,6 +273,7 @@ function checkIn_(documentProperties) {
         ];    
     range = sheet.getRange(lastRow, TIMESHEET_COLUMN_DATE, 1, newValues[0].length)
     range.setValues(newValues)
+    range.activate()
     
     // Set the document properties
     documentProperties.setProperty(TIMESHEET_PROPERTY_LAST_ROW, lastRow)
@@ -280,9 +295,12 @@ function checkOut_(documentProperties) {
   // See what the check in/out status currently is
   var status = documentProperties.getProperty(TIMESHEET_PROPERTY_STATUS)
   if (status === null || status === STATUS_CHECKED_OUT) {
+    
     // Not checked in
     uiErrorDialog('You have not checked in, so you cannot check out.')
+    
   } else {
+    
     // Get the last row
     var lastRow = documentProperties.getProperty(TIMESHEET_PROPERTY_LAST_ROW)
     
@@ -292,12 +310,14 @@ function checkOut_(documentProperties) {
     var currentDate = new Date()
     currentDate.setSeconds(0, 0)
     range.setValue(currentDate)
+    range.activate()
 
     // Set the document properties
     documentProperties.setProperty(TIMESHEET_PROPERTY_STATUS, STATUS_CHECKED_OUT)
         
     // Log the action
     Log_.info('Checked out at ' + currentDate)
+    
   }
      
 } // checkOut()

@@ -10,8 +10,8 @@
 
 function resetProperties(properties) {
   
-  properties.setProperty(TIMESHEET_PROPERTY_LAST_ROW, 2)
-  properties.setProperty(TIMESHEET_PROPERTY_STATUS, STATUS_CHECKED_OUT)
+  properties.deleteProperty(TIMESHEET_PROPERTY_LAST_ROW)
+  properties.deleteProperty(TIMESHEET_PROPERTY_STATUS)
     
 } // resetProperties()
 
