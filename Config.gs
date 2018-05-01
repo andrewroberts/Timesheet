@@ -53,6 +53,7 @@ var STATUS_CHECKED_OUT = 'CHECKED_OUT'
 
 // Columns in the Timesheet
 var columnNumber = 1;
+
 var TIMESHEET_COLUMN_DATE               = columnNumber; columnNumber++
 var TIMESHEET_COLUMN_START              = columnNumber; columnNumber++
 var TIMESHEET_COLUMN_END                = columnNumber; columnNumber++
@@ -69,8 +70,6 @@ var TIMESHEET_COLUMN_VELOCITY           = columnNumber; columnNumber++
 var TIMESHEET_COLUMN_INVOICE            = columnNumber; columnNumber++
 var TIMESHEET_COLUMN_TASK_NOTES         = columnNumber; columnNumber++
 var TIMESHEET_COLUMN_COUNT              = columnNumber - 1;
-
-
 // Function Template
 // -----------------
 

@@ -279,7 +279,6 @@ function checkOut_(documentProperties) {
     uiErrorDialog('You have not checked in, so you cannot check out.')
     
   } else {
-
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME)        
     var lastRow = getLastRow_(sheet)
     var range = sheet.getRange(lastRow, TIMESHEET_COLUMN_END)
