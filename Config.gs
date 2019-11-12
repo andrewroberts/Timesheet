@@ -22,7 +22,7 @@
 // =============
 
 var SCRIPT_NAME = "Timesheet"
-var SCRIPT_VERSION = "v1.0"
+var SCRIPT_VERSION = "v1.1"
 
 var PRODUCTION_VERSION_ = false
 
@@ -46,7 +46,6 @@ var SHEET_NAME = 'Timesheet'
 
 // Properties
 var TIMESHEET_PROPERTY_STATUS = 'TIMESHEET_STATUS'
-var TIMESHEET_PROPERTY_LAST_ROW = 'TIMESHEET_LAST_ROW'
 
 // Constants
 var STATUS_CHECKED_IN = 'CHECKED_IN'
@@ -54,24 +53,23 @@ var STATUS_CHECKED_OUT = 'CHECKED_OUT'
 
 // Columns in the Timesheet
 var columnNumber = 1;
-var TIMESHEET_COLUMN_DATE = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_START = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_END = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_TIME = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_BILLABLE = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_TOTAL = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_HOURS = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_BURNUP = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_ACTUAL_BURNDOWN = columnNumber; columnNumber++
+
+var TIMESHEET_COLUMN_DATE               = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_START              = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_END                = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_TIME               = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_BILLABLE           = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_TOTAL              = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_HOURS              = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_BURNUP             = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_ACTUAL_BURNDOWN    = columnNumber; columnNumber++
 var TIMESHEET_COLUMN_PREDICTED_BURNDOWN = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_BLANK = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_EOD = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_VELOCITY = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_INVOICE = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_TASK_NOTES = columnNumber; columnNumber++
-var TIMESHEET_COLUMN_COUNT = columnNumber - 1;
-
-
+var TIMESHEET_COLUMN_BLANK              = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_EOD                = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_VELOCITY           = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_INVOICE            = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_TASK_NOTES         = columnNumber; columnNumber++
+var TIMESHEET_COLUMN_COUNT              = columnNumber - 1;
 // Function Template
 // -----------------
 
@@ -82,7 +80,7 @@ var TIMESHEET_COLUMN_COUNT = columnNumber - 1;
  *
  * @return {Object}
  */
- 
+/* 
 function functionTemplate() {
 
   Log_.functionEntryPoint()
@@ -90,3 +88,4 @@ function functionTemplate() {
   
 
 } // functionTemplate() 
+*/

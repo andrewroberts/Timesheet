@@ -10,7 +10,6 @@
 
 function resetProperties(properties) {
   
-  properties.deleteProperty(TIMESHEET_PROPERTY_LAST_ROW)
   properties.deleteProperty(TIMESHEET_PROPERTY_STATUS)
     
 } // resetProperties()

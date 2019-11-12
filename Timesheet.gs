@@ -204,6 +204,7 @@ function checkIn_(documentProperties) {
   
   // See what the check in/out status currently is
   var status = documentProperties.getProperty(TIMESHEET_PROPERTY_STATUS)
+  
   if (status === STATUS_CHECKED_IN) {
     
     // Not checked out
@@ -211,36 +212,16 @@ function checkIn_(documentProperties) {
     
   } else {
     
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME)
-    
-    // Get the last row
-    var lastRow = documentProperties.getProperty(TIMESHEET_PROPERTY_LAST_ROW)
-    if (lastRow === null) {
-      
-      // No property set so find the first non-blank row by searching the first date column      
-      var values = sheet.getRange(1, 1, sheet.getLastRow()).getValues()
-           
-      for (var count = 0; count < values.length; count++) {
-        
-        if (values[count][0] == "") {
-          
-          lastRow = count
-          break;
-        }
-                  
-      }
-      
-    } else {
-      
-      lastRow = parseInt(lastRow, 10)
-      
-    }
-   
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME)    
+    var lastRow = getLastRow_(sheet) 
+       
     // Insert a new row under the last row (this new row will inherit formatting from the above row)
+    
     sheet.insertRowAfter(lastRow)
     lastRow = lastRow + 1
     
     // Copy all the formulas from the previous above to our new row
+    
     var sourceRange = sheet.getRange(lastRow-1, 1, 1, TIMESHEET_COLUMN_COUNT)
     var range = sheet.getRange(lastRow, 1, 1, TIMESHEET_COLUMN_COUNT)
     sourceRange.copyTo(range, SpreadsheetApp.CopyPasteType.PASTE_FORMULA, false)
@@ -248,35 +229,32 @@ function checkIn_(documentProperties) {
     // CopyPasteType.PASTE_FORMULA seems to still copy values too
     // Not sure if this is a bug or a value is considered a formula too?
     // Anyway, we now need to clear the non-formula values
-    var formulas = range.getFormulas();
+    var formulas = range.getFormulas()
+    
     for (var count = 0; count < formulas[0].length; count++) {
       
-      if(formulas[0][count] === '') {
-        
+      if (formulas[0][count] === '') {
         range = sheet.getRange(lastRow, count+1)
-        range.setValue('')
-        
+        range.setValue('')       
       } 
-      
     }
     
     // Create an array for the new row values and insert them
+    
     var currentDate = new Date()
     currentDate.setSeconds(0, 0)
-    var newValues = 
-        [ 
-          [ 
-            currentDate, // Date
-            currentDate, // Start
-            currentDate  // End
-          ]
-        ];    
+    
+    var newValues = [[ 
+      currentDate, // Date
+      currentDate, // Start
+      currentDate  // End
+    ]]
+        
     range = sheet.getRange(lastRow, TIMESHEET_COLUMN_DATE, 1, newValues[0].length)
     range.setValues(newValues)
     range.activate()
     
     // Set the document properties
-    documentProperties.setProperty(TIMESHEET_PROPERTY_LAST_ROW, lastRow)
     documentProperties.setProperty(TIMESHEET_PROPERTY_STATUS, STATUS_CHECKED_IN)
     
     // Log the action
@@ -294,18 +272,15 @@ function checkOut_(documentProperties) {
 
   // See what the check in/out status currently is
   var status = documentProperties.getProperty(TIMESHEET_PROPERTY_STATUS)
+  
   if (status === null || status === STATUS_CHECKED_OUT) {
     
     // Not checked in
     uiErrorDialog('You have not checked in, so you cannot check out.')
     
   } else {
-    
-    // Get the last row
-    var lastRow = documentProperties.getProperty(TIMESHEET_PROPERTY_LAST_ROW)
-    
-    // Insert the check out time
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME)        
+    var lastRow = getLastRow_(sheet)
     var range = sheet.getRange(lastRow, TIMESHEET_COLUMN_END)
     var currentDate = new Date()
     currentDate.setSeconds(0, 0)
@@ -320,6 +295,32 @@ function checkOut_(documentProperties) {
     
   }
      
-} // checkOut()
+} // checkOut_()
 
+/**
+ * @return {number} the last used row for time entries
+ */
 
+function getLastRow_(sheet) {
+  
+  Log_.functionEntryPoint()
+  
+  var lastRow = null
+  
+  var values = sheet.getRange(1, 1, sheet.getLastRow()).getValues()
+  
+  for (var count = 0; count < values.length; count++) {
+    
+    if (values[count][0] === "") {        
+      lastRow = count
+      break
+    }                 
+  }
+  
+  if (lastRow === null) {
+    uiErrorDialog('Can not find the last empty row.')
+  }
+  
+  return lastRow
+  
+} // getLastRow_()
