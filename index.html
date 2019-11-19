@@ -50,7 +50,7 @@
     function checkingInOut() {
 
       console.log("In checkingInOut")      
-      var checkedIn = google.script.run.withSuccessHandler(runCheckInOut).isCheckedIn();
+      var checkedIn = google.script.run.withSuccessHandler(runCheckInOut).withFailureHandler(function(err){ alert("Error on isCheckedIn")}).isCheckedIn();
       return
       
       // Private Functions
@@ -65,14 +65,14 @@
           /* Runs the serverside script checkIn 
           * Then calls the "setButtonStatus" function.
           */
-          google.script.run.withSuccessHandler(setButtonStatus).checkIn();
+          google.script.run.withSuccessHandler(setButtonStatus).withFailureHandler(function(err){ alert("Error on checkIn")}).checkIn();
         
         } else if (checkedIn && document.getElementById("checkinout").value === "Check Out"){
         
           /* Runs the serverside script checkIn 
           * Then calls the "setButtonStatus" function.
           */
-          google.script.run.withSuccessHandler(setButtonStatus).checkOut();
+          google.script.run.withSuccessHandler(setButtonStatus).withFailureHandler(function(err){ alert("Error on checkOut")}).checkOut();
           
         } else {
         
