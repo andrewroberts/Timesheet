@@ -45,7 +45,7 @@ var EVENT_HANDLERS = {
   initialize:              ['initialize()',             'Failed to initialize',                 initialize_],
   checkIn:                 ['checkIn()',                'checkIn failed',                       checkIn_],
   checkOut:                ['checkOut()',               'checkOut failed',                      checkOut_],
-  isCheckedIn:               ['isCheckedIn()',              'isCheckedIn failed',                     isCheckedIn_],
+  isCheckedIn:             ['isCheckedIn()',            'isCheckedIn failed',                   isCheckedIn_],
 }
 
 // function (arg)                     {return eventHandler_(EVENT_HANDLERS., arg)}
@@ -150,16 +150,16 @@ function onInstall_(event){
     
   }
     
-  onOpen(event)
+  onOpen_(event)
 }
 
 function onOpen_(event) {
     
   var menu = SpreadsheetApp
-        .getUi()
-        .createMenu('[ Timesheet ]')
-        .addItem('Check In',  'checkIn')
-        .addItem('Check Out', 'checkOut')
+        .getUi().createMenu('[ Timesheet ]')
+        
+      menu.addItem('Check In',  'checkIn')
+      menu.addItem('Check Out', 'checkOut')
         
   if (event.authMode === ScriptApp.AuthMode.NONE) {
    
@@ -214,6 +214,11 @@ function initialize_() {
 
   properties.setProperty('triggerOpenId', triggerOpenId)
 
+  // Refresh the menu (initialize is only ever called from menu, when authMode is FULL)
+  onOpen_({authMode: ScriptApp.AuthMode.FULL})
+  
+  
+  Log_.info('Created onOpen trigger: ' + triggerOpenId)
 }
 
 /**
