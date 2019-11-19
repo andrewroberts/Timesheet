@@ -1,6 +1,6 @@
 // 34567890123456789012345678901234567890123456789012345678901234567890123456789
 
-// JSHint - TODO
+// JSHint - 19th Nov 2019
 /* jshint asi: true */
 
 (function() {"use strict"})()
@@ -39,18 +39,25 @@ var Log_
 
 var EVENT_HANDLERS = {
 
-//                         Initial actions  Name                         onError Message                        Main Functionality
-//                         ---------------  ----                         ---------------                        ------------------
-
-  checkIn:                 [function() {},  'checkIn()',                'checkIn failed',                       checkIn_],
-  checkOut:                [function() {},  'checkOut()',               'checkOut failed',                      checkOut_],
+//                         Name                         onError Message                        Main Functionality
+//                         ----                         ---------------                        ------------------
+  onInstall:               ['onInstall()',              'Failed to install',                    onInstall_],
+  initialize:              ['initialize()',             'Failed to initialize',                 initialize_],
+  checkIn:                 ['checkIn()',                'checkIn failed',                       checkIn_],
+  checkOut:                ['checkOut()',               'checkOut failed',                      checkOut_],
+  isCheckedIn:               ['isCheckedIn()',              'isCheckedIn failed',                     isCheckedIn_],
 }
 
 // function (arg)                     {return eventHandler_(EVENT_HANDLERS., arg)}
 
-function checkIn (arg1, arg2, properties, lock) {return eventHandler_(EVENT_HANDLERS.checkIn, arg1, arg2, properties, lock)}
-function checkOut (arg1, arg2, properties, lock) {return eventHandler_(EVENT_HANDLERS.checkOut, arg1, arg2, properties, lock)}
+function onInstall(arg1) {return eventHandler_(EVENT_HANDLERS.onInstall,arg1)}
+function initialize(arg1) {return eventHandler_(EVENT_HANDLERS.initialize,arg1)}
+function checkIn (arg1) {return eventHandler_(EVENT_HANDLERS.checkIn, arg1)}
+function checkOut (arg1) {return eventHandler_(EVENT_HANDLERS.checkOut, arg1)}
+function isCheckedIn (arg1) {return eventHandler_(EVENT_HANDLERS.isCheckedIn, arg1)}
 
+// These can be opened in various authModes so it needs to be outside eventHandler_() 
+function onOpen(arg1) {onOpen_(arg1)}
 
 // Private Functions
 // =================
@@ -67,134 +74,147 @@ function checkOut (arg1, arg2, properties, lock) {return eventHandler_(EVENT_HAN
  *   [1] {String} eventName
  *   [2] {String} onErrorMessage
  *   [3] {Function} mainFunction
- 
+ *
  * @param {Object}   arg1       The argument passed to the top-level event handler
- * @param {Object}   arg2       The argument passed to the top-level event handler
- * @param {Property} properties A PropertiesService
- * @param {Lock}     lock       A LockService
  */
 
-function eventHandler_(config, arg1, arg2, properties, lock) {
-
-  // Check the parameters
-
-  if (typeof arg1 === 'undefined') {
-    throw new Error('The first argument has to be defined or set to null')
-  } 
-
-  if (typeof arg2 === 'undefined') {
-    throw new Error('The second argument has to be defined or set to null')
-  } 
-
-  try {
-
-    properties.getProperties()
-    
-  } catch (error) {
-  
-    if (error.message.indexOf('Cannot call method "getProperties" of undefined') !== -1) {
-    
-      throw new Error('The third argument has to be one of the PropertiesServices')
-      
-    } else {
-    
-      throw error
-    }
-  }
+function eventHandler_(config, arg1) {
   
   try {
 
-    lock.hasLock()
+    var userEmail = 'unknown email'
+    var initializeLog = false
+
+    if (arg1 !== undefined && arg1 instanceof Object && arg1.hasOwnProperty('authMode')) {
     
-  } catch (error) {
-  
-    if (error.message.indexOf('Cannot call method "hasLock" of undefined') !== -1) {
-    
-      throw new Error('The fourth argument has to be one of the LockService')
+      // arg1 is an event so need to check authMode
+      if (arg1.authMode !== ScriptApp.AuthMode.NONE) { // LIMITED or FULL
+
+        userEmail = Session.getEffectiveUser().getEmail()
+        initializeLog = true
+      }
       
     } else {
-    
-      throw error
+
+      // arg1 is not an event so assume we have sufficient auth to do the following
+      userEmail = Session.getEffectiveUser().getEmail()
+      initializeLog = true   
     }
-  }
-
-  // Perform the main functionality
-  var originallyHasLock
-  try {
-
-    originallyHasLock = lock.hasLock()
-
-    // Perform any initial functions
-    config[0]()    
-
-    initialseEventHandler()
     
-    var userEmail = Session.getEffectiveUser().getEmail()
-    Log_.info('Handling ' + config[1] + ' from ' + (userEmail || 'unknown email') + ' (' + SCRIPT_NAME + ' ' + SCRIPT_VERSION + ')')
+    if (initializeLog) {
     
-    // Call the main function
-    return config[3](arg1, arg2)
-    
-  } catch (error) {
-  
-    Assert.handleError(error, config[2], Log_)
-    
-  } finally {
-  
-    if (!originallyHasLock) {
-      lock.releaseLock()
-    }
-  }
-  
-  return
-  
-  // Private Functions
-  // -----------------
-
-  /**
-   * Initialise the event handling
-   */
- 
-  function initialseEventHandler() {
-      
-    var userEmail = Session.getEffectiveUser().getEmail()
-
-    Assert.init({
-      handleError:    HANDLE_ERROR_, 
-      sendErrorEmail: SEND_ERROR_EMAIL_, 
-      emailAddress:   ADMIN_EMAIL_ADDRESS_ + ',' + userEmail,
-      scriptName:     SCRIPT_NAME,
-      scriptVersion:  SCRIPT_VERSION, 
-    })
-
-    if (PRODUCTION_VERSION_) {
-    
-      var firebaseUrl = properties.getProperty(PROPERTY_FIREBASE_URL)
-      var firebaseSecret = properties.getProperty(PROPERTY_FIREBASE_SECRET)
-
-      Log_ = BBLog.getLog({
-        displayUserId:        BBLog.DisplayUserId.USER_KEY_FULL,
-        lock:                 lock,
-        firebaseUrl:          firebaseUrl,
-        firebaseSecret:       firebaseSecret,
-      });
-    
-    } else {
-
       Log_ = BBLog.getLog({
         level:                DEBUG_LOG_LEVEL_, 
         displayFunctionNames: DEBUG_LOG_DISPLAY_FUNCTION_NAMES_,
-        lock:                 lock,
       })
+      
+      Log_.info('Handling ' + config[0] + ' from ' + (userEmail || 'unknown email') + ' (' + SCRIPT_NAME + ' ' + SCRIPT_VERSION + ')')
     }
 
-  } // eventHandler_.initialseEventHandler() 
+    // Call the main function
+    return config[2](arg1)
+    
+  } catch (error) {
+  
+    var handleError = Assert.HandleError.DISPLAY_FULL
 
+    if (!PRODUCTION_VERSION_) {
+      handleError = Assert.HandleError.THROW
+    }
+
+    var assertConfig = {
+      error:          error,
+      userMessage:    config[1],
+      log:            Log_,
+      handleError:    handleError, 
+      sendErrorEmail: SEND_ERROR_EMAIL_, 
+      emailAddress:   ADMIN_EMAIL_ADDRESS_,
+      scriptName:     SCRIPT_NAME,
+      scriptVersion:  SCRIPT_VERSION, 
+    }
+
+    Assert.handleError(assertConfig) 
+  }
+  
 } // eventHandler_()
 
 // Private event handlers
 // ----------------------
 
+function onInstall_(event){
+
+  var triggerOpenId = properties.getProperty('triggerOpenId')
+  
+  if (triggerOpenId !== null) {
+    properties.deleteProperty('triggerOpenId')
+    
+  }
+    
+  onOpen(event)
+}
+
+function onOpen_(event) {
+    
+  var menu = SpreadsheetApp
+        .getUi()
+        .createMenu('[ Timesheet ]')
+        .addItem('Check In',  'checkIn')
+        .addItem('Check Out', 'checkOut')
+        
+  if (event.authMode === ScriptApp.AuthMode.NONE) {
+   
+    menu.addItem('Start', 'initialize') 
+
+  } else { // LIMITED or FULL
+  
+    var triggerOpenId = PropertiesService.getDocumentProperties().getProperty('triggerOpenId')
+        
+    if (triggerOpenId === null) {
+  
+      menu.addItem('Start', 'initialize')   
+  
+    } else {
+    
+      var html = HtmlService
+      .createHtmlOutputFromFile("index")
+      .setTitle("Check In/Check Out");
+      SpreadsheetApp.getUi().showSidebar(html)
+    }    
+  }
+  menu.addToUi()
+}
+
+function isCheckedIn_(properties) {
+
+  var status = properties.getProperty("TIMESHEET_STATUS")
+  Log_.fine('status: ' + status)
+
+  if (status === "CHECKED_IN"){
+    return true
+  } else {
+    return false
+  }
+}
+
+function initialize_() {
+
+  var properties = PropertiesService.getDocumentProperties()
+  var timesheetId = SpreadsheetApp.getActive().getId()
+  
+  var triggerOpenId = ScriptApp
+    .newTrigger('onOpen')
+    .forSpreadsheet(timesheetId)
+    .onOpen()
+    .create()
+    .getUniqueId()
+    
+  if (properties.getProperty('triggerOpenId') !== null) {
+    throw new Error('There is already a trigger Open ID stored')
+  }
+
+  properties.setProperty('triggerOpenId', triggerOpenId)
+
+}
 
 /**
  * Private 'check in' event handler

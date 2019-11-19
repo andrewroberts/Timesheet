@@ -1,12 +1,12 @@
 // 34567890123456789012345678901234567890123456789012345678901234567890123456789
 
-// JSHint - TODO
+// JSHint - 19th Nov 2019
 /* jshint asi: true */
 
 (function() {"use strict"})()
 
 // Code review all files - TODO
-// JSHint review (see files) - TODO
+// JSHint review (see files) - Done
 // Unit Tests - TODO
 // System Test (Dev) - TODO
 // System Test (Prod) - TODO
@@ -22,9 +22,9 @@
 // =============
 
 var SCRIPT_NAME = "Timesheet"
-var SCRIPT_VERSION = "v1.1"
+var SCRIPT_VERSION = "v1.2"
 
-var PRODUCTION_VERSION_ = false
+var PRODUCTION_VERSION_ = true
 
 // Log Library
 // -----------
