@@ -3,7 +3,6 @@
   <head>
     <base target="_top">
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
     <div class = "sidebar">
@@ -12,17 +11,25 @@
      <br>
      <input class="action" id="checkinout" type="button" value="" onmouseup="checkingInOut()">
     </div>
-     
+    <div id="error" hidden><!-- Error message will go here --></div>     
     <script>
     
     // Initially Set the button status
     setButtonStatus();
     
-    /* Run the setButtonStatus to set the text on the button */              
+    function errorHandler(error) { // Same one for all the "script.google.run"s
+      document.getElementById("error").value = error.message
+      document.getElementById("error").style.display = "inline" // "none" to hide it again
+    }
+    
+    // Run the setButtonStatus to set the text on the button           
     function setButtonStatus() {
     
       console.log("In setButtonStatus")
-      var checkedIn = google.script.run.withSuccessHandler(setText).withFailureHandler(function(err){ alert("Error on isCheckedIn")}).isCheckedIn();       
+      var checkedIn = google.script.run
+        .withSuccessHandler(setText)
+        .withFailureHandler(errorHandler)
+        .isCheckedIn();       
       return 
       
       // Private Functions
@@ -50,7 +57,10 @@
     function checkingInOut() {
 
       console.log("In checkingInOut")      
-      var checkedIn = google.script.run.withSuccessHandler(runCheckInOut).withFailureHandler(function(err){ alert("Error on isCheckedIn")}).isCheckedIn();
+      var checkedIn = google.script.run
+        .withSuccessHandler(runCheckInOut)
+        .withFailureHandler(errorHandler)
+        .isCheckedIn();
       return
       
       // Private Functions
@@ -65,14 +75,20 @@
           /* Runs the serverside script checkIn 
           * Then calls the "setButtonStatus" function.
           */
-          google.script.run.withSuccessHandler(setButtonStatus).withFailureHandler(function(err){ alert("Error on checkIn")}).checkIn();
+          google.script.run
+            .withSuccessHandler(setButtonStatus)
+            .withFailureHandler(errorHandler)
+            .checkIn();
         
-        } else if (checkedIn && document.getElementById("checkinout").value === "Check Out"){
+        } else if (checkedIn && document.getElementById("checkinout").value === "Check Out") {
         
           /* Runs the serverside script checkIn 
           * Then calls the "setButtonStatus" function.
           */
-          google.script.run.withSuccessHandler(setButtonStatus).withFailureHandler(function(err){ alert("Error on checkOut")}).checkOut();
+          google.script.run
+            .withSuccessHandler(setButtonStatus)
+            .withFailureHandler(errorHandler)
+            .checkOut();
           
         } else {
         

@@ -41,7 +41,6 @@ var EVENT_HANDLERS = {
 
 //                         Name                         onError Message                        Main Functionality
 //                         ----                         ---------------                        ------------------
-  onInstall:               ['onInstall()',              'Failed to install',                    onInstall_],
   initialize:              ['initialize()',             'Failed to initialize',                 initialize_],
   checkIn:                 ['checkIn()',                'checkIn failed',                       checkIn_],
   checkOut:                ['checkOut()',               'checkOut failed',                      checkOut_],
@@ -50,7 +49,6 @@ var EVENT_HANDLERS = {
 
 // function (arg)                     {return eventHandler_(EVENT_HANDLERS., arg)}
 
-function onInstall(arg1) {return eventHandler_(EVENT_HANDLERS.onInstall,arg1)}
 function initialize(arg1) {return eventHandler_(EVENT_HANDLERS.initialize,arg1)}
 function checkIn (arg1) {return eventHandler_(EVENT_HANDLERS.checkIn, arg1)}
 function checkOut (arg1) {return eventHandler_(EVENT_HANDLERS.checkOut, arg1)}
@@ -141,47 +139,28 @@ function eventHandler_(config, arg1) {
 // Private event handlers
 // ----------------------
 
-function onInstall_(event){
-
-  var triggerOpenId = properties.getProperty('triggerOpenId')
-  
-  if (triggerOpenId !== null) {
-    properties.deleteProperty('triggerOpenId')
-    
-  }
-    
-  onOpen_(event)
-}
-
-function onOpen_(event) {
+function onOpen_(properties) {
     
   var menu = SpreadsheetApp
-    .getUi().createMenu('[ Timesheet ]')
-        
-      menu.addItem('Check In',  'checkIn')
-      menu.addItem('Check Out', 'checkOut')
-        
-  if (event.authMode === ScriptApp.AuthMode.NONE) {
-   
-    menu.addItem('Start', 'initialize') 
-
-  } else { // LIMITED or FULL
+        .getUi().createMenu('[ Timesheet ]')
   
-    var triggerOpenId = PropertiesService.getDocumentProperties().getProperty('triggerOpenId')
+  var triggerOpenId = properties.getProperty('triggerOpenId')
         
-    if (triggerOpenId === null) {
+  if (triggerOpenId === null) {
   
-      menu.addItem('Start', 'initialize')   
+    menu.addItem('Start', 'initialize')   
   
-    } else {
+  } else {
     
-      var html = HtmlService
-        .createHtmlOutputFromFile("index")
-        .setTitle("Check In/Check Out");
-
-      SpreadsheetApp.getUi().showSidebar(html)
-    }    
-  }
+    menu.addItem('Check In',  'checkIn')
+    menu.addItem('Check Out', 'checkOut')
+      
+    var html = HtmlService
+      .createHtmlOutputFromFile("index")
+      .setTitle("Check In/Check Out");
+    SpreadsheetApp.getUi().showSidebar(html)
+  }    
+  
   menu.addToUi()
 }
 
@@ -190,16 +169,12 @@ function isCheckedIn_(properties) {
   var status = properties.getProperty("TIMESHEET_STATUS")
   Log_.fine('status: ' + status)
 
-  if (status === "CHECKED_IN"){
-    return true
-  } else {
-    return false
-  }
+  return (status === 'CHECKED_IN' ? true : false)
+
 }
 
-function initialize_() {
+function initialize_(properties) {
 
-  var properties = PropertiesService.getDocumentProperties()
   var timesheetId = SpreadsheetApp.getActive().getId()
   
   var triggerOpenId = ScriptApp
@@ -215,9 +190,8 @@ function initialize_() {
 
   properties.setProperty('triggerOpenId', triggerOpenId)
 
-  // Refresh the menu (initialize is only ever called from menu, when authMode is FULL)
-  onOpen_({authMode: ScriptApp.AuthMode.FULL})
-  
+  // Refresh the menu
+  onOpen_(properties)
   
   Log_.info('Created onOpen trigger: ' + triggerOpenId)
 }
@@ -285,8 +259,7 @@ function checkIn_(documentProperties) {
     
     // Log the action
     Log_.info('Checked in at ' + currentDate)
-  }
-  
+  }    
 } // checkIn()
 
 
@@ -319,8 +292,7 @@ function checkOut_(documentProperties) {
     // Log the action
     Log_.info('Checked out at ' + currentDate)
     
-  }
-     
+  }     
 } // checkOut_()
 
 /**
