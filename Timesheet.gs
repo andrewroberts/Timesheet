@@ -156,7 +156,7 @@ function onInstall_(event){
 function onOpen_(event) {
     
   var menu = SpreadsheetApp
-        .getUi().createMenu('[ Timesheet ]')
+    .getUi().createMenu('[ Timesheet ]')
         
       menu.addItem('Check In',  'checkIn')
       menu.addItem('Check Out', 'checkOut')
