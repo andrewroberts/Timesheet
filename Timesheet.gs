@@ -177,7 +177,8 @@ function onOpen_(event) {
     
       var html = HtmlService
         .createHtmlOutputFromFile("index")
-      .setTitle("Check In/Check Out");
+        .setTitle("Check In/Check Out");
+
       SpreadsheetApp.getUi().showSidebar(html)
     }    
   }
