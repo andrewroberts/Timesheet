@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  </head>
+  <body>
+    <div class = "sidebar">
+     <p>Click the Button to Check In and Out 
+     <p>
+     <br>
+     <input class="action" id="checkinout" type="button" value="" onmouseup="checkingInOut()">
+    </div>
+    <div id="error" hidden><!-- Error message will go here --></div>     
+    <script>
+    
+    // Initially Set the button status
+    setButtonStatus();
+    
+    function errorHandler(error) { // Same one for all the "script.google.run"s
+      document.getElementById("error").value = error.message
+      document.getElementById("error").style.display = "inline" // "none" to hide it again
+    }
+    
+    // Run the setButtonStatus to set the text on the button           
+    function setButtonStatus() {
+    
+      console.log("In setButtonStatus")
+      var checkedIn = google.script.run
+        .withSuccessHandler(setText)
+        .withFailureHandler(errorHandler)
+        .isCheckedIn();       
+      return 
+      
+      // Private Functions
+      // -----------------
+       
+      function setText(checkedIn) {
+
+        console.log("In setText: " + checkedIn)      
+
+        if (checkedIn) {
+          
+          // If Checked In, set the button text to 'Check Out'
+          document.getElementById("checkinout").value = "Check Out";
+         
+        } else {
+            
+          // If Checked Out, set the button text to 'Check In'
+          document.getElementById("checkinout").value = "Check In"; 
+        }
+        
+      } // setButtonStatus.setText(checkedIn)
+      
+    } // setButtonStatus()
+     
+    function checkingInOut() {
+
+      console.log("In checkingInOut")      
+      var checkedIn = google.script.run
+        .withSuccessHandler(runCheckInOut)
+        .withFailureHandler(errorHandler)
+        .isCheckedIn();
+      return
+      
+      // Private Functions
+      // -----------------
+
+      function runCheckInOut(checkedIn) {
+ 
+        console.log("In runCheckInOut: " + checkedIn)      
+ 
+        if (!checkedIn && document.getElementById("checkinout").value === "Check In") {
+        
+          /* Runs the serverside script checkIn 
+          * Then calls the "setButtonStatus" function.
+          */
+          google.script.run
+            .withSuccessHandler(setButtonStatus)
+            .withFailureHandler(errorHandler)
+            .checkIn();
+        
+        } else if (checkedIn && document.getElementById("checkinout").value === "Check Out") {
+        
+          /* Runs the serverside script checkIn 
+          * Then calls the "setButtonStatus" function.
+          */
+          google.script.run
+            .withSuccessHandler(setButtonStatus)
+            .withFailureHandler(errorHandler)
+            .checkOut();
+          
+        } else {
+        
+          //Does not know which function to run
+          throw new Error(" Status and Button text incompatible")          
+        }
+        
+      } // checkingInOut.runCheckInOut(checkedIn)
+      
+    }; // checkingInOut()
+      
+    </script>    
+  </body>
+</html>
